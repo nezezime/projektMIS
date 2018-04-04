@@ -4,20 +4,23 @@
 //includes
 #include <SoftwareSerial.h>
 #include <string.h>
+#include <Arduino.h>
 
 //declarations
-class quectelArduinoClass(){
+class quectelArduinoClass{
     private:
         SoftwareSerial * quectelSerial;
+        char atResponseBuffer[128];
+
     public:
         int send_at_command(String command);
-        String get_at_response(void);
+        char * get_at_response(void);
         bool send_handshake(void);
         bool init(int rxPin, int txPin);
+        char * crop_at_response(void); 
 
+};
 
-}
-
-extern quectelArduinoClass quectelArduino; 
+//extern quectelArduinoClass quectelArduino; 
 
 #endif
