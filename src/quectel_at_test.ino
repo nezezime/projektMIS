@@ -1,44 +1,33 @@
-#include <SoftwareSerial.h>
+//includes
+#include "quectel_arduino_lib.h"
 
-int led_pin = 13;
+//macros
+#define QUECTEL_SERIAL_RX 8
+#define QUECTEL_SERIAL_TX 7
 
-SoftwareSerial quectel_serial(8,7);
-
+extern quectelArduinoClass quectelArduino;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  Serial.println("session started");
-  quectel_serial.begin(9600);
 
-  pinMode(led_pin, OUTPUT);
-  digitalWrite(led_pin, HIGH);
+  //init serial communication
+  Serial.begin(9600);
+  
+  if(quectelArduino.init(QUECTEL_SERIAL_RX, QUECTEL_SERIAL_TX) == false){
+    Serial.println("Failed quectel module initialization");
+  }
+  else Serial.println("Quectel module serial communication successful");
 }
 
-byte ry_byte = 0;
-char buff[100];
-
 void loop() {
-    quectel_serial.listen();
-    quectel_serial.write("AT\r");
+  quectelArduino.send_at_command("AT");
+  char * resp = quectelArduino.get_at_response();
+  //Serial.print("a");
+  //Serial.print(resp);
+  //Serial.print("b");
+  delay(1000);
 
-    String a;
-    
+  char bla;
 
-    delay(1000);
+  Serial.println(quectelArduino.crop_at_response());
 
-    int i = quectel_serial.available();
-    Serial.print("bytes available: ");
-    Serial.println(i);
-    
-    int cnt;
-    
-    for(cnt = 0; cnt <i; cnt++){
-      char c = quectel_serial.read();
-      Serial.print((int)c);
-    }
-    Serial.println("");
-    
-    
-    delay(1000);
 }
