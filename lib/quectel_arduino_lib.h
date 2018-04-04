@@ -8,9 +8,8 @@
 //declarations
 class quectelArduinoClass(){
     private:
-        
+        SoftwareSerial * quectelSerial;
     public:
-        SoftwareSerial quectelSerial(8,7); //naredi init funkcijo
         int send_at_command(String command);
         String get_at_response(void);
         bool send_handshake(void);
