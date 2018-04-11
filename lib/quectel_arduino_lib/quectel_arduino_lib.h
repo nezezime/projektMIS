@@ -19,6 +19,7 @@ class quectelArduinoClass{
         bool send_handshake(void);
         bool init(int rxPin, int txPin, String nBand, String APN, String forceOperator);
         char * crop_at_response(void); 
+        void sendCommandAndPrintResp(String command, unsigned int timeout);
 
 };
 

@@ -79,18 +79,26 @@ bool quectelArduinoClass::send_handshake(){
     //}
 }
 
+void quectelArduinoClass::sendCommandAndPrintResp(String command, unsigned int timeout){
+
+    Serial.println(command);
+    send_at_command(command);
+    delay(timeout);
+    char * resp = get_at_response();
+    Serial.println(crop_at_response());
+}
 
 //do not use the hardware serial pins
 bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, String forceOperator){
 
     quectelSerial = new SoftwareSerial(rxPin, txPin);
-    
-
     quectelSerial->begin(9600);
     quectelSerial->listen();
 
+    String command;
 
     //send handshake
+    /*
     send_at_command("AT");
     char *resp = get_at_response();
 
@@ -98,21 +106,51 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
 
     Serial.print("AT command response: ");
     Serial.println(crop_at_response());
-    
-    //set frequency band
+    */
+
+    //test the serial conection
+    sendCommandAndPrintResp("AT", 300);
+
+    //////////////////////////////initial configuration////////////////////////////////////////////
+    sendCommandAndPrintResp("AT+CFUN=0", 5000); //disable radio
+    sendCommandAndPrintResp("AT+NCONFIG=\"AUTOCONNECT\",\"FALSE\"", 300);
+    sendCommandAndPrintResp("AT+NCONFIG=\"CR_0354_0338_SCRAMBLING\",\"TRUE\"", 5000);
+    sendCommandAndPrintResp("AT+NCONFIG=\"CR_0859_SI_AVOID\",\"TRUE\"", 300);
+    sendCommandAndPrintResp("AT+CEREG=2", 10000); //connect to iot core
+
+
+    /////////////////////////////connect to network///////////////////////////////////////////////
+    command = "AT+CGDCONT=1,\"IP\",\"" + APN + "\"";
+    sendCommandAndPrintResp(command, 10000);
+    sendCommandAndPrintResp("AT+CFUN=1", 25000); //enable radio
+
+    command = "AT+COPS=1,2,\""+ forceOperator +"\"";
+    sendCommandAndPrintResp(command, 10000);
+
+    sendCommandAndPrintResp("AT+CSQ", 5000); //get radio signal quality
+
+    /////////////////////////////try the connection///////////////////////////////////////////////
+    sendCommandAndPrintResp("AT+CSCON=1", 1000); //?
+    sendCommandAndPrintResp("AT+NPING=8.8.8.8", 3000); // ping google dns
+    sendCommandAndPrintResp("AT+NSOCR=\"DGRAM\",17,12005,1", 3000); //?
+  
+    //set frequency band - NOT REQUIRED
+    /*
     String command = "AT+NBAND=" + nBand;
     Serial.println(command);
     send_at_command(command);
     resp = get_at_response();
     Serial.println(crop_at_response());
-
+    
+    
     //show frequency band
     command = "AT+NBAND?";
     Serial.println(command);
     send_at_command(command);
     resp = get_at_response();
     Serial.println(crop_at_response());
-
+    */
+    /*
     //set apn
     delay(1000);
     command = "AT+CGDCONT=1,\"IP\",\"" + APN + "\""; //cid= caller id, protocol, apn
@@ -178,11 +216,11 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     Serial.println(crop_at_response());
 
     //omogoca nastavljanje PSM (power saving mode)
-    /*command = "AT+CPSMS?";
+    command = "AT+CPSMS?";
     Serial.println(command);
     send_at_command(command);
     resp = get_at_response();
-    Serial.println(crop_at_response());*/
+    Serial.println(crop_at_response());
 
     //show the ip address of the device
     command = "AT+CGPADDR";
@@ -205,7 +243,7 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     send_at_command(command);
     resp = get_at_response();
     Serial.println(crop_at_response());
-
+    */
     return true;
 }
 
