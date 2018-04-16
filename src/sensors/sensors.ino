@@ -24,5 +24,7 @@ void loop () {
     Serial.println(z);
     double dist = distanceSensor.measureDistanceCm();
     Serial.println(dist); // Print the distance in centimeters
-    delay(500); // Every 500 miliseconds, do a measurement
+    Serial.println();
+
+    delay(1000);
 }
