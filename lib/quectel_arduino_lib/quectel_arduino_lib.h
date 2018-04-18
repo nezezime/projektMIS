@@ -20,6 +20,8 @@ class quectelArduinoClass{
         bool init(int rxPin, int txPin, String nBand, String APN, String forceOperator);
         char * crop_at_response(void); 
         void sendCommandAndPrintResp(String command, unsigned int timeout);
+        bool at_ping(String ip_addr, int timeout);
+        bool create_socket(String port);
 
 };
 

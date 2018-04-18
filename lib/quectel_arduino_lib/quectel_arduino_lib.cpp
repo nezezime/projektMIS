@@ -25,6 +25,45 @@ int quectelArduinoClass::send_at_command(String command){
     return quectelSerial->available();
 }
 
+bool quectelArduinoClass::at_ping(String ip_addr, int timeout){
+
+    String command = "AT+NPING="+ ip_addr + ",12,5000\r";
+    Serial.println(command);
+    send_at_command(command);
+    delay(timeout);
+    char * resp = get_at_response();
+    Serial.println(crop_at_response());
+
+    return true;
+}
+
+bool quectelArduinoClass::create_socket(String port){
+    /*  
+    //TCP
+    //create TCP socket
+    sendCommandAndPrintResp("AT+NSOCR=STREAM,6,1234,2", 3000); //ustvari socket, ALI TCP DELUJE?
+
+    //connect to TCP server
+    //String command = ;
+    sendCommandAndPrintResp("AT+NSOCO=0,83.212.127.86,1024", 3000);
+
+    //send tcp
+    //sendCommandAndPrintResp();
+
+    //close session
+    sendCommandAndPrintResp("AT+NSOCR=0",1000);
+    */
+    
+
+    //UDP
+    sendCommandAndPrintResp("AT+NSOCR=DGRAM,17,1235,1", 3000); //open UDP socket
+    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,20,5175656374656C204E422D496F542044656D6F0D,1", 3000); //send some data
+    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,2,AB30,2", 3000);
+    sendCommandAndPrintResp("AT+NSOCL=0", 1000); //close socket
+    
+    return true;
+}
+
 char * quectelArduinoClass::get_at_response(){
 
     int nSybols = quectelSerial->available();
@@ -38,6 +77,8 @@ char * quectelArduinoClass::get_at_response(){
 
     return &atResponseBuffer[0];
 }
+
+
 
 char * quectelArduinoClass::crop_at_response(void){
 
@@ -88,6 +129,8 @@ void quectelArduinoClass::sendCommandAndPrintResp(String command, unsigned int t
     Serial.println(crop_at_response());
 }
 
+
+
 //do not use the hardware serial pins
 bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, String forceOperator){
 
@@ -109,7 +152,12 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     */
 
     //test the serial conection
+    //PrintResp("AT+NRB",10000);
     sendCommandAndPrintResp("AT", 300);
+
+    //get the existing configuration
+    sendCommandAndPrintResp("AT+NCONFIG?",300);
+    sendCommandAndPrintResp("AT+CGDCONT?",300);
 
     //////////////////////////////initial configuration////////////////////////////////////////////
     sendCommandAndPrintResp("AT+CFUN=0", 5000); //disable radio
@@ -128,11 +176,16 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     sendCommandAndPrintResp(command, 10000);
 
     sendCommandAndPrintResp("AT+CSQ", 5000); //get radio signal quality
+    sendCommandAndPrintResp("AT+NBAND?", 500);//get the radio channel used
+    sendCommandAndPrintResp("AT+CGPADDR", 500);//show the device ip
 
     /////////////////////////////try the connection///////////////////////////////////////////////
-    sendCommandAndPrintResp("AT+CSCON=1", 1000); //?
-    sendCommandAndPrintResp("AT+NPING=8.8.8.8", 3000); // ping google dns
-    sendCommandAndPrintResp("AT+NSOCR=\"DGRAM\",17,12005,1", 3000); //?
+    //sendCommandAndPrintResp("AT+CSCON=1", 1000); //omogoca izpisovanje connection statusa ob vsakem radijskem dogodku
+    //sendCommandAndPrintResp("AT+NPING=8.8.8.8,12,1000", 3000); // ping google dns
+    //sendCommandAndPrintResp("AT+NPING=83.212.127.86,12,1000", 3000);//ping our server
+
+    at_ping("8.8.8.8", 1000);
+    at_ping("83.212.127.86", 1000);
   
     //set frequency band - NOT REQUIRED
     /*
