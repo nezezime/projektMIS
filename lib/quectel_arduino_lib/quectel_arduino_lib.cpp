@@ -54,6 +54,7 @@ bool quectelArduinoClass::create_socket(String port){
     sendCommandAndPrintResp("AT+NSOCR=0",1000);
     */
     
+    //AT+CGATT? - pove ce je povezan v omrezje
 
     //UDP
     sendCommandAndPrintResp("AT+NSOCR=DGRAM,17,1235,1", 3000); //open UDP socket
