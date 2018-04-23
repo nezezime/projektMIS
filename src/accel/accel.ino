@@ -29,7 +29,7 @@ void setup(){
                                       // Default: Set to 1
                                       // SPI pins on the ATMega328: 11, 12 and 13 as reference in SPI Library 
   
-  adxl.setActivityXYZ(1, 0, 0);       // Set to activate movement detection in the axes "adxl.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
+  adxl.setActivityXYZ(0, 1, 0);       // Set to activate movement detection in the axes "adxl.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
   adxl.setActivityThreshold(75);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
 /*  
   adxl.setInactivityXYZ(1, 0, 0);     // Set to detect inactivity in all the axes "adxl.setInactivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
@@ -52,6 +52,10 @@ void setup(){
   //adxl.setImportantInterruptMapping(1, 1, 1, 1, 1);     // Sets "adxl.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
                                                         // Accepts only 1 or 2 values for pins INT1 and INT2. This chooses the pin on the ADXL345 to use for Interrupts.
                                                         // This library may have a problem using INT2 pin. Default to INT1 pin.
+  pinMode(3, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(3), ACTIVITY_ISR, FALLING);
+  adxl.setInterruptLevelBit(0);
+  adxl.setInterruptMapping(ADXL345_INT_ACTIVITY_BIT, ADXL345_INT1_PIN);
   
   // Turn on Interrupts for each mode (1 == ON, 0 == OFF)
   adxl.InactivityINT(0);
@@ -69,8 +73,8 @@ void setup(){
 void loop(){
   
   // Accelerometer Readings
-  int x,y,z;   
-  adxl.readAccel(&x, &y, &z);         // Read the accelerometer values and store them in variables declared above x,y,z
+  //int x,y,z;   
+  //adxl.readAccel(&x, &y, &z);         // Read the accelerometer values and store them in variables declared above x,y,z
 
   // Output Results to Serial
   /* UNCOMMENT TO VIEW X Y Z ACCELEROMETER VALUES */  
@@ -85,6 +89,10 @@ void loop(){
   //  and place it within the loop instead.  
   // This may come in handy when it doesn't matter when the action occurs. 
 
+}
+
+void ACTIVITY_ISR() {
+  Serial.println("interrupt");
 }
 
 /********************* ISR *********************/
