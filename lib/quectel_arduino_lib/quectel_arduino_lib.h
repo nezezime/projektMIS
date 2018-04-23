@@ -21,8 +21,8 @@ class quectelArduinoClass{
         char * crop_at_response(void); 
         void sendCommandAndPrintResp(String command, unsigned int timeout);
         bool at_ping(String ip_addr, int timeout);
-        bool create_socket(String port);
-
+        unsigned int create_socket(String port);
+        bool send_udp(unsigned int sessionId);
 };
 
 //extern quectelArduinoClass quectelArduino; 

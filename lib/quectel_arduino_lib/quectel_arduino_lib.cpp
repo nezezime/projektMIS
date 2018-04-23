@@ -37,7 +37,7 @@ bool quectelArduinoClass::at_ping(String ip_addr, int timeout){
     return true;
 }
 
-bool quectelArduinoClass::create_socket(String port){
+unsigned int quectelArduinoClass::create_socket(String port){
     /*  
     //TCP
     //create TCP socket
@@ -55,14 +55,22 @@ bool quectelArduinoClass::create_socket(String port){
     */
     
     //AT+CGATT? - pove ce je povezan v omrezje
+    //sendCommandAndPrintResp("AT+CGATT=1", 5000);
+    sendCommandAndPrintResp("AT+CGATT?", 300);
 
     //UDP
     sendCommandAndPrintResp("AT+NSOCR=DGRAM,17,1235,1", 3000); //open UDP socket
-    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,20,5175656374656C204E422D496F542044656D6F0D,1", 3000); //send some data
-    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,2,AB30,2", 3000);
+    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,20,5175656374656C204E422D496F542044656D6F0D", 3000); //send some data
+    sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,2,AB30", 3000);
+    //sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,20,5175656374656C204E422D496F542044656D6F0D,1", 3000); //send some data
+    //sendCommandAndPrintResp("AT+NSOST=0,83.212.127.86,80,2,AB30,2", 3000);
     sendCommandAndPrintResp("AT+NSOCL=0", 1000); //close socket
     
     return true;
+}
+
+bool quectelArduinoClass::send_udp(unsigned int sessionId){
+    
 }
 
 char * quectelArduinoClass::get_at_response(){
@@ -165,6 +173,8 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     sendCommandAndPrintResp("AT+NCONFIG=\"AUTOCONNECT\",\"FALSE\"", 300);
     sendCommandAndPrintResp("AT+NCONFIG=\"CR_0354_0338_SCRAMBLING\",\"TRUE\"", 5000);
     sendCommandAndPrintResp("AT+NCONFIG=\"CR_0859_SI_AVOID\",\"TRUE\"", 300);
+    sendCommandAndPrintResp("AT+NRB", 7000); //reboot the module
+    sendCommandAndPrintResp("AT", 300);
     sendCommandAndPrintResp("AT+CEREG=2", 10000); //connect to iot core
 
 
