@@ -28,3 +28,32 @@ void loop () {
 
     delay(1000);
 }
+
+bool measurement() {
+  double tmpDist = 0;
+  bool measurementError1, measurementError2 = 0;
+  int i, tmp, cnt1, tmpX, tmpY, tmpZ = 0;
+
+  //DISTANCE
+  while (cnt1 != 3) {
+    tmp = distanceSensor.measureDistanceCm();
+    if (tmp < 0) {
+      tmpDist = tmpDist + tmp;
+      cnt1++;
+    }
+    i++;
+    if (i == 10) break;
+    delay(1000);
+  }
+  if (tmpDist == 0) {
+    measurementError1 = 1;
+  }else {
+    tmpDist = round(tmpDist / cnt1);
+  }
+
+  //ACCEL
+  adxl.readAccel(&tmpX, &tmpY, &tmpZ);
+  if (tmpY < 100){
+    measurementError2 = 1; //pokrov je odprt
+  }
+}
