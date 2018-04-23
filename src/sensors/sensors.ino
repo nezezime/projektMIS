@@ -33,6 +33,7 @@ void loop () {
     Serial.println();
 */
     measurement();
+    Serial.println(dist);
     Serial.print("measurementError1 = ");
     Serial.println(measurementError1);
     Serial.print("measurementError2 = ");
@@ -43,7 +44,9 @@ void loop () {
 
 void measurement() {
   int i, tmp, cnt1, tmpX, tmpY, tmpZ = 0;
-  measurementError1, measurementError2 = 0;
+  measurementError1 = 0;
+  measurementError2 = 0;
+  dist = -1;
   //MEASURE ACCEL
   adxl.readAccel(&tmpX, &tmpY, &tmpZ);
   if (tmpY < 200){
@@ -52,13 +55,13 @@ void measurement() {
     //MEASURE DISTANCE
     while (cnt1 != 20) {
       tmp = distanceSensor.measureDistanceCm();
-      if (tmp < 0) {
+      if (tmp > 0) {
         dist = dist + tmp;
         cnt1++;
       }
       i++;
       if (i == 100) break;
-      delay(10);
+      delay(20);
     }
     if (dist == 0) {
       measurementError1 = 1;
