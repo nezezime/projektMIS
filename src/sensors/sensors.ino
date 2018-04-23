@@ -8,6 +8,11 @@
 UltraSonicDistanceSensor distanceSensor(TrigPin, EchoPin);  // Initialize distance sensor
 ADXL345 adxl = ADXL345(); //I2C communication with accel sensor
 
+//Global Variables
+double dist = 0;
+bool measurementError1 = 0; //distance sensor returned "-1" 100x
+bool measurementError2 = 0; //accelerometer returned <200 in y axes therefore lid is open
+
 void setup () {
     Serial.begin(9600);
     adxl.powerOn(); // Power on the accel sensor
@@ -15,45 +20,50 @@ void setup () {
 }
 
 void loop () {
-    int x,y,z;   
-    adxl.readAccel(&x, &y, &z); // Read the accelerometer values and store them
-    Serial.print(x);
+  /*
+    int xx,yy,zz;   
+    adxl.readAccel(&xx, &yy, &zz); // Read the accelerometer values and store them
+    Serial.print(xx);
     Serial.print(", ");
-    Serial.print(y);
+    Serial.print(yy);
     Serial.print(", ");
-    Serial.println(z);
-    double dist = distanceSensor.measureDistanceCm();
-    Serial.println(dist); // Print the distance in centimeters
+    Serial.println(zz);
+    double distance = distanceSensor.measureDistanceCm();
+    Serial.println(distance); // Print the distance in centimeters
     Serial.println();
-
+*/
+    measurement();
+    Serial.print("measurementError1 = ");
+    Serial.println(measurementError1);
+    Serial.print("measurementError2 = ");
+    Serial.println(measurementError2);
+    Serial.println();
     delay(1000);
 }
 
-bool measurement() {
-  double tmpDist = 0;
-  bool measurementError1, measurementError2 = 0;
+void measurement() {
   int i, tmp, cnt1, tmpX, tmpY, tmpZ = 0;
-
-  //DISTANCE
-  while (cnt1 != 3) {
-    tmp = distanceSensor.measureDistanceCm();
-    if (tmp < 0) {
-      tmpDist = tmpDist + tmp;
-      cnt1++;
-    }
-    i++;
-    if (i == 10) break;
-    delay(1000);
-  }
-  if (tmpDist == 0) {
-    measurementError1 = 1;
-  }else {
-    tmpDist = round(tmpDist / cnt1);
-  }
-
-  //ACCEL
+  measurementError1, measurementError2 = 0;
+  //MEASURE ACCEL
   adxl.readAccel(&tmpX, &tmpY, &tmpZ);
-  if (tmpY < 100){
+  if (tmpY < 200){
     measurementError2 = 1; //pokrov je odprt
+  }else{
+    //MEASURE DISTANCE
+    while (cnt1 != 20) {
+      tmp = distanceSensor.measureDistanceCm();
+      if (tmp < 0) {
+        dist = dist + tmp;
+        cnt1++;
+      }
+      i++;
+      if (i == 100) break;
+      delay(10);
+    }
+    if (dist == 0) {
+      measurementError1 = 1;
+    }else {
+      dist = (double)round((float)dist / cnt1);
+    }
   }
 }

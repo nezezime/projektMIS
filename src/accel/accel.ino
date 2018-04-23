@@ -29,8 +29,8 @@ void setup(){
                                       // Default: Set to 1
                                       // SPI pins on the ATMega328: 11, 12 and 13 as reference in SPI Library 
   
-  adxl.setActivityXYZ(1, 1, 1);       // Set to activate movement detection in the axes "adxl.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
-  adxl.setActivityThreshold(10);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
+  adxl.setActivityXYZ(1,1,1);       // Set to activate movement detection in the axes "adxl.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
+  adxl.setActivityThreshold(30);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
 /*  
   adxl.setInactivityXYZ(1, 0, 0);     // Set to detect inactivity in all the axes "adxl.setInactivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
   adxl.setInactivityThreshold(75);    // 62.5mg per increment   // Set inactivity // Inactivity thresholds (0-255)
@@ -52,9 +52,9 @@ void setup(){
   adxl.setImportantInterruptMapping(1, 1, 1, 1, 1);     // Sets "adxl.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
                                                         // Accepts only 1 or 2 values for pins INT1 and INT2. This chooses the pin on the ADXL345 to use for Interrupts.
                                                         // This library may have a problem using INT2 pin. Default to INT1 pin.
-  //pinMode(3, INPUT_PULLUP);
+  pinMode(3, INPUT);
   attachInterrupt(digitalPinToInterrupt(3), ADXL_ISR, RISING);
-  //adxl.setInterruptLevelBit(0);
+  adxl.setInterruptLevelBit(1);
   //adxl.setInterruptMapping(ADXL345_INT_ACTIVITY_BIT, ADXL345_INT1_PIN);
   
   // Turn on Interrupts for each mode (1 == ON, 0 == OFF)
