@@ -53,7 +53,7 @@ void setup(){
                                                         // Accepts only 1 or 2 values for pins INT1 and INT2. This chooses the pin on the ADXL345 to use for Interrupts.
                                                         // This library may have a problem using INT2 pin. Default to INT1 pin.
   //pinMode(3, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(3), ACTIVITY_ISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(3), ADXL_ISR, RISING);
   //adxl.setInterruptLevelBit(0);
   //adxl.setInterruptMapping(ADXL345_INT_ACTIVITY_BIT, ADXL345_INT1_PIN);
   
