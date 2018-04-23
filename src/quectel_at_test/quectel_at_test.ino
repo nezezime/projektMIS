@@ -8,7 +8,7 @@
 extern quectelArduinoClass quectelArduino;
 
 void setup() {
-
+  
   //init serial communication
   Serial.begin(9600);
   
@@ -19,15 +19,10 @@ void setup() {
 }
 
 void loop() {
-  //quectelArduino.send_at_command("AT");
-  char * resp = quectelArduino.get_at_response();
-  //Serial.print("a");
-  //Serial.print(resp);
-  //Serial.print("b");
+  
+  delay(3000);
+  quectelArduino.at_ping("83.212.127.86", 1000);
   delay(1000);
-
-  char bla;
-
-  //Serial.println(quectelArduino.crop_at_response());
-
+  quectelArduino.create_socket("test");
+  
 }
