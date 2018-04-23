@@ -49,13 +49,13 @@ void setup(){
   adxl.setFreeFallDuration(30);       // (20 - 70) recommended - 5ms per increment
 */ 
   // Setting all interupts to take place on INT1 pin
-  //adxl.setImportantInterruptMapping(1, 1, 1, 1, 1);     // Sets "adxl.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
+  adxl.setImportantInterruptMapping(1, 1, 1, 1, 1);     // Sets "adxl.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
                                                         // Accepts only 1 or 2 values for pins INT1 and INT2. This chooses the pin on the ADXL345 to use for Interrupts.
                                                         // This library may have a problem using INT2 pin. Default to INT1 pin.
   pinMode(3, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(3), ACTIVITY_ISR, FALLING);
   adxl.setInterruptLevelBit(0);
-  adxl.setInterruptMapping(ADXL345_INT_ACTIVITY_BIT, ADXL345_INT1_PIN);
+  //adxl.setInterruptMapping(ADXL345_INT_ACTIVITY_BIT, ADXL345_INT1_PIN);
   
   // Turn on Interrupts for each mode (1 == ON, 0 == OFF)
   adxl.InactivityINT(0);
@@ -93,6 +93,7 @@ void loop(){
 
 void ACTIVITY_ISR() {
   Serial.println("interrupt");
+  getInterruptSource(); // take care where you put this
 }
 
 /********************* ISR *********************/
