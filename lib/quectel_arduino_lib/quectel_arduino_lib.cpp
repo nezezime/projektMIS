@@ -149,19 +149,7 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
 
     String command;
 
-    //send handshake
-    /*
-    send_at_command("AT");
-    char *resp = get_at_response();
-
-    delay(1000);
-
-    Serial.print("AT command response: ");
-    Serial.println(crop_at_response());
-    */
-
     //test the serial conection
-    //PrintResp("AT+NRB",10000);
     sendCommandAndPrintResp("AT", 300);
 
     //get the existing configuration
@@ -173,141 +161,38 @@ bool quectelArduinoClass::init(int rxPin, int txPin, String nBand, String APN, S
     sendCommandAndPrintResp("AT+NCONFIG=\"AUTOCONNECT\",\"FALSE\"", 300);
     sendCommandAndPrintResp("AT+NCONFIG=\"CR_0354_0338_SCRAMBLING\",\"TRUE\"", 5000);
     sendCommandAndPrintResp("AT+NCONFIG=\"CR_0859_SI_AVOID\",\"TRUE\"", 300);
-    sendCommandAndPrintResp("AT+NRB", 7000); //reboot the module
-    sendCommandAndPrintResp("AT", 300);
-    sendCommandAndPrintResp("AT+CEREG=2", 10000); //connect to iot core
-
-
+    //sendCommandAndPrintResp("AT+NRB", 1000); //reboot the module
+    //delay(15000);
+    //sendCommandAndPrintResp("AT", 300);
+    sendCommandAndPrintResp("AT+CEREG=2", 30000); //connect to iot core
+    
     /////////////////////////////connect to network///////////////////////////////////////////////
     command = "AT+CGDCONT=1,\"IP\",\"" + APN + "\"";
     sendCommandAndPrintResp(command, 10000);
+    //sendCommandAndPrintResp("AT+CGACT=1,1", 10000);
+
     sendCommandAndPrintResp("AT+CFUN=1", 25000); //enable radio
 
     command = "AT+COPS=1,2,\""+ forceOperator +"\"";
     sendCommandAndPrintResp(command, 10000);
+    sendCommandAndPrintResp("AT+CSCON=1", 1000);
+
+    sendCommandAndPrintResp("AT+CEREG?", 300);
+    delay(10000);
+
+    sendCommandAndPrintResp("AT+CGACT?", 5000);
+    
+    //sendCommandAndPrintResp("AT+CGACT=1,1", 10000);
 
     sendCommandAndPrintResp("AT+CSQ", 5000); //get radio signal quality
     sendCommandAndPrintResp("AT+NBAND?", 500);//get the radio channel used
-    sendCommandAndPrintResp("AT+CGPADDR", 500);//show the device ip
+    sendCommandAndPrintResp("AT+CGPADDR=1", 500);//show the device ip
+    sendCommandAndPrintResp("AT+CEER", 300); //show the error details
 
     /////////////////////////////try the connection///////////////////////////////////////////////
-    //sendCommandAndPrintResp("AT+CSCON=1", 1000); //omogoca izpisovanje connection statusa ob vsakem radijskem dogodku
-    //sendCommandAndPrintResp("AT+NPING=8.8.8.8,12,1000", 3000); // ping google dns
-    //sendCommandAndPrintResp("AT+NPING=83.212.127.86,12,1000", 3000);//ping our server
-
     at_ping("8.8.8.8", 1000);
     at_ping("83.212.127.86", 1000);
   
-    //set frequency band - NOT REQUIRED
-    /*
-    String command = "AT+NBAND=" + nBand;
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-    
-    
-    //show frequency band
-    command = "AT+NBAND?";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-    */
-    /*
-    //set apn
-    delay(1000);
-    command = "AT+CGDCONT=1,\"IP\",\"" + APN + "\""; //cid= caller id, protocol, apn
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //connect to iot core ????
-    command = "AT+CEREG=2";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    command = "AT+CEREG?";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //set indications to active
-    //command = "AT+NSMI=1";
-    //Serial.println(command);
-    //send_at_command(command);
-    //resp = get_at_response();
-    //Serial.println(crop_at_response());
-
-    //command = "AT+NNMI=1";
-    //Serial.println(command);
-    //Serial.println(crop_at_response());
-
-    //set radio active
-    command = "AT+CFUN=1"; //set this to 0 when not using radio?
-    Serial.println(command);
-    send_at_command(command);
-    delay(7000);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //get radio signal quality
-    command = "AT+CSQ";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //force the module to connect to network
-    command = "AT+COPS=1,2,\""+ forceOperator +"\"";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //NCONFIG?
-
-    //returns 1 if the device is attached to the packet domain service
-    command = "AT+CGATT?";
-    Serial.println(command);
-    send_at_command(command);
-    delay(3000);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //omogoca nastavljanje PSM (power saving mode)
-    command = "AT+CPSMS?";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    //show the ip address of the device
-    command = "AT+CGPADDR";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-
-    delay(30000);
-    command = "AT+CEREG?";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-
-    delay(180000);
-    command = "AT+CEREG?";
-    Serial.println(command);
-    send_at_command(command);
-    resp = get_at_response();
-    Serial.println(crop_at_response());
-    */
     return true;
 }
 
