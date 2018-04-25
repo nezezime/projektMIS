@@ -43,14 +43,14 @@ void ADXL_ISR() {
   
   // getInterruptSource clears all triggered actions after returning value
   // Do not call again until you need to recheck for triggered actions
-  byte interrupts = adxl.getInterruptSource(); // mogoce bi blo bols na konc funkcije?
+  //byte interrupts = adxl.getInterruptSource(); // zaradi tega obvisi, gleda na pospeskometru kaj je sprozilo interrupt
   
   Serial.println("*** INSIDE ADXL_ISR ***"); 
   
   // Activity
-  if(adxl.triggered(interrupts, ADXL345_ACTIVITY)){
-    Serial.println("*** ACTIVITY ***"); 
-     //add code here to do when activity is sensed
-  }
+  //if(adxl.triggered(interrupts, ADXL345_ACTIVITY)){
+  //  Serial.println("*** ACTIVITY ***"); 
+  //   //add code here to do when activity is sensed
+  //}
 }
 
