@@ -2,6 +2,8 @@
 
 ADXL345 adxl = ADXL345();             // I2C COMMUNICATION
 int interruptPin = 2;
+//int interruptPin = 3;
+//int interruptPin = 1;
 
 void setup() {
   Serial.begin(9600);
@@ -40,6 +42,8 @@ void ADXL_ISR() {
   // getInterruptSource clears all triggered actions after returning value
   // Do not call again until you need to recheck for triggered actions
   byte interrupts = adxl.getInterruptSource(); // mogoce bi blo bols na konc funkcije?
+  
+  Serial.println("*** INSIDE ADXL_ISR ***"); 
   
   // Activity
   if(adxl.triggered(interrupts, ADXL345_ACTIVITY)){
