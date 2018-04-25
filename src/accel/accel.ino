@@ -1,13 +1,11 @@
 #include <SparkFun_ADXL345.h> 
 
 ADXL345 adxl = ADXL345();             // I2C COMMUNICATION
-int interruptPin = 2;
-//int interruptPin = 3;
-//int interruptPin = 1;
+const byte interruptPin = 2;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("setup()");
+  Serial.println("BEGIN SETUP");
   
   adxl.powerOn();
   adxl.setRangeSetting(2);           // Give the range settings
@@ -27,11 +25,11 @@ void setup() {
   adxl.FreeFallINT(0);
   adxl.doubleTapINT(0);
   adxl.singleTapINT(0);
-  /*
-  adxl.setInterruptLevelBit(1); // positive logic
-  pinMode(interruptPin, INPUT);
-  */
-  attachInterrupt(digitalPinToInterrupt(interruptPin), ADXL_ISR, RISING);
+  
+  //adxl.setInterruptLevelBit(1); // positive logic
+  pinMode(interruptPin, INPUT_PULLUP);
+  
+  attachInterrupt(digitalPinToInterrupt(interruptPin), ADXL_ISR, FALLING);
   
 
   Serial.println("END SETUP");
