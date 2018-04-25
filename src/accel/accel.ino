@@ -27,6 +27,8 @@ void setup() {
   
   // Turn on Interrupt (1 == ON, 0 == OFF)
   adxl.ActivityINT(1);
+
+  Serial.println("END SETUP");
 }
 
 void loop(){
