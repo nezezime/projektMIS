@@ -6,13 +6,15 @@ const byte interruptPin = 2;
 void setup() {
   Serial.begin(9600);
   Serial.println("BEGIN SETUP");
+
+  pinMode(5, INPUT); //TESTNO IZPISOVANJE INTERRUPTA
   
   adxl.powerOn();
   adxl.setRangeSetting(2);           // Give the range settings
                                       // Accepted values are 2g, 4g, 8g or 16g
   
   adxl.setActivityXYZ(1,1,1);       // Set to activate movement detection in the axes "adxl.setActivityXYZ(X, Y, Z);" (1 == ON, 0 == OFF)
-  adxl.setActivityThreshold(30);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
+  adxl.setActivityThreshold(10);      // 62.5mg per increment   // Set activity   // Inactivity thresholds (0-255)
 
   // Setting all interupts to take place on INT1 pin
   adxl.setImportantInterruptMapping(0, 0, 0, 1, 0);     // Sets "adxl.setEveryInterruptMapping(single tap, double tap, free fall, activity, inactivity);" 
@@ -27,16 +29,17 @@ void setup() {
   adxl.singleTapINT(0);
   
   //adxl.setInterruptLevelBit(1); // positive logic
-  pinMode(interruptPin, INPUT_PULLUP);
+  pinMode(interruptPin, INPUT);
   
-  attachInterrupt(digitalPinToInterrupt(interruptPin), ADXL_ISR, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(interruptPin), ADXL_ISR, RISING);
   
 
   Serial.println("END SETUP");
 }
 
 void loop(){
-  
+  Serial.println(digitalRead(5));
+  delay(5);
 }
 
 void ADXL_ISR() {
