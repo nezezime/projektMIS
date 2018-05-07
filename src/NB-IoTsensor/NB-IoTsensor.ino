@@ -3,9 +3,7 @@
     Originally written by speirano for SmartEverything
     Adjusted by Gregory Knauff of SODAQ for the NB-IoT shield
   Adjusted by Jan van Loenen to work on Sodaq Explorer and Arduino Leonardo
-
   Standard I2C-address is 0x5F.
-
 ***************************************************************************/
 
 #include <Arduino.h>
@@ -54,9 +52,14 @@ int Sodaq_nbIOT;
 //void initGPS();
 void loop();
 void do_flash_led(int pin);
+void sendUdp(char * data);
 
 void setup()
 {
+  //String data = "test";
+  //String hex = String(data, HEX);
+  //Serial.println(hex);
+  
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
 
@@ -82,6 +85,7 @@ void setup()
 
   digitalWrite(13, LOW);
 }
+
 /////////////funcija za povezovanje//////////////////
 bool connectToNetwork() {
   if (nbiot.connect("v-iot", "29341")) {
@@ -96,6 +100,25 @@ bool connectToNetwork() {
   }
 }
 
+void sendUdp(char * data){
+    DEBUG_STREAM.println("sendUdp");
+    char buf[2];
+    int dataSize = strlen(data);
+    String dataHex;
+    DEBUG_STREAM.print("data length: ");
+    DEBUG_STREAM.println(dataSize);
+
+    for(int i=0; i<strlen(data); i++){
+      char c = *(data+i);
+      DEBUG_STREAM.println(c);
+      sprintf(buf, "%0x", c);
+      dataHex+=buf[0];
+      dataHex+=buf[1];
+     }
+
+     nbiot.sendudp(dataHex, dataSize);
+  }
+
 ////////////////////PRETVORBA PODATKOV V HEX IN DODAJANJE TOPICA IN ENOTE////////////
 void Data(char *value, String topicdata, String enotahex)
 { char buf[2];
@@ -109,65 +132,14 @@ void Data(char *value, String topicdata, String enotahex)
   topicdata+=enotahex;
   sizeUDP=topicdata.length()/2;
 
-  //POSLJI UDP na IP naslov v knjižnici
-  //nbiot.sendudp(topicdata, sizeUDP);
-  String testData = "";
-  int testDataLen = ;
-  nbiot.sendudp(testData, testDataLen);
-}
 
-/*
-
-////////////////////PRETVORBA PODATKOV V HEX IN DODAJANJE TOPICA IN LATITUDE LONGITUDE////////////
-void DataGPS(char *GPSCharLon, char *GPSCharLat, String topicdata)
-{ char buf[2];
-  int sizeUDP;
-  //dodan Latitude: in pretvorba latitude vrednosti v HEX
-  topicdata+="4c617469747564653a20";
-  for(int i=0;i<strlen(GPSCharLat);i++)
-  {  char c=*(GPSCharLat+i);  // single ascii value
-     sprintf(buf,"%0x",c);// convert ascii value in hex
-     topicdata+=buf[0];
-     topicdata+=buf[1];
-  }
-  //dodan Longitude: in pretvorba longitude vrednosti v HEX
-  topicdata+="204c6f6e6769747564653a20";
-  for(int i=0;i<strlen(GPSCharLon);i++)
-  {  char c=*(GPSCharLon+i);  // single ascii value
-     sprintf(buf,"%0x",c);// convert ascii value in hex
-     topicdata+=buf[0];
-     topicdata+=buf[1];
-  }
-  sizeUDP=topicdata.length()/2;
+  Serial.println("data: ");
+  Serial.println(topicdata);
+  Serial.println(sizeUDP);
 
   //POSLJI UDP na IP naslov v knjižnici
   nbiot.sendudp(topicdata, sizeUDP);
 }
-
-void initHumidityTemperature() {
-  if (hts221.begin() == false)
-  {
-    DEBUG_STREAM.println("Error while retrieving WHO_AM_I byte...");
-    while (1);
-  }
-}
-
-void initPressureSensor() {
-  lps22hb.begin(0x5D);  //
-
-  if (lps22hb.whoAmI() == false)
-  {
-    DEBUG_STREAM.println("Error while retrieving WHO_AM_I byte...");
-  }
-}
-
-void initGPS() {
-  sodaq_gps.init(6);
-  nbiot.osocket();
-  // sodaq_gps.setDiag(DEBUG_STREAM);
-}
-
-*/
 
 void loop()
 {
@@ -181,125 +153,12 @@ void loop()
   String topic;
   String enotahex;
 
-/*
-
-/////////BRANJE TEMPERATURE////////////
-  temperature = hts221.readTemperature() * 100;
-  DEBUG_STREAM.println("Temperature x100 : " + (String)temperature);
-//temperatura v temperaturaChar
-  char cstr1[16];
-  temperatureChar=itoa(temperature, cstr1, 10);
-
-  //dodajanje decimalne vejice
-  if(temperature>=1000){
-  temperatureChar[4]=temperatureChar[3];
-  temperatureChar[3]=temperatureChar[2];
-  temperatureChar[2]='.';
-  temperatureChar[5]='\0';
-  }
-  if(temperature<1000&&temperature>100){
-  temperatureChar[3]=temperatureChar[2];
-  temperatureChar[2]=temperatureChar[1];
-  temperatureChar[1]='.';
-  temperatureChar[4]='\0';
-  }
-
-
-//topic v HEX ----- Temperatura -->54656d706572617475726120
-  topic="54656d706572617475726120";
-  enotahex="43"; //C
-/////////Pretvorba v HEX in poslji UDP
-  Data(temperatureChar, topic, enotahex);
-
-  delay(100);
-
-
-
-////////////////////BRANJE VLAGE///////////////
-  humidity = hts221.readHumidity();
-  DEBUG_STREAM.println("Humidity : " + (String)humidity);
-
-//humidity v humidityChar
-  char cstr2[16];
-  humidityChar=itoa(humidity, cstr2, 10);
-
-//topic v HEX ----- Vlaga -->566c61676120
-  topic="566c61676120";
-  enotahex="25";//%
-/////////Pretvorba v HEX in poslji UDP
-  Data(humidityChar, topic, enotahex);
-
-  delay(100);
-
-
-////////////////////BRANJE Pritiska///////////////////
-  pressure = lps22hb.readPressure();
-  DEBUG_STREAM.println("Pressure:" + (String)pressure);
-
-//pressure v pressureChar
-  char cstr3[16];
-  pressureChar=itoa(pressure, cstr3, 10);
-
-
-//topic v HEX ----- Pritisk -->5072697469736b20
-  topic="5072697469736b20";
-  enotahex="685061";//hPa
-//Pretvorba v HEX in poslji UDP
-  Data(pressureChar, topic, enotahex);
-
-
-////////////BRANJE GPS////////////IZBERI 10sec
-  uint32_t start = millis();
-  uint32_t timeout = 1UL * 10 * 1000; // x sec timeout
-
-
-  DEBUG_STREAM.println(String("waiting for fix ..., timeout=") + timeout + String("ms"));
-  if (sodaq_gps.scan(true, timeout)) {
-
-    lat = sodaq_gps.getLat() * 100000;
-    lon = sodaq_gps.getLon() * 100000;
-//Ustavljanje decimalnih pik v latitude longitude
-  char* GPSCharLat;
-  char* GPSCharLon;
-  String GPSChar;
-  char cstr4[16];
-  char cstr5[16];
-  GPSCharLat=itoa(lat, cstr4, 10);
-  GPSCharLon=itoa(lon, cstr5, 10);
-  //dodajanje decimalnih vejic
-  GPSCharLon[6]=GPSCharLon[5];
-  GPSCharLon[5]=GPSCharLon[4];
-  GPSCharLon[4]=GPSCharLon[3];
-  GPSCharLon[3]=GPSCharLon[2];
-  GPSCharLon[2]='.';
-
-  GPSCharLat[6]=GPSCharLat[5];
-  GPSCharLat[5]=GPSCharLat[4];
-  GPSCharLat[4]=GPSCharLat[3];
-  GPSCharLat[3]=GPSCharLat[2];
-  GPSCharLat[2]='.';
-
-
-//topic v HEX ----- GPS  -->47505320
-  topic="475053204944313b";
-//////////////Pretvorba v HEX in poslji UDP////////////
-  DataGPS(GPSCharLat, GPSCharLon, topic);
-  DEBUG_STREAM.println();
-  }
-
-  else {
-    DEBUG_STREAM.println("GPS No Fix");
-
-    //polje UDP data "GPS No Fix" v HEX --->475053204e6f20466978
-    String nodata="475053204e6f20466978";
-    nbiot.sendudp(nodata, 10);
-    }
-
-  // Wait some time between messages
-  delay(5000); // 1000 = 1 sec
-*/
-
+  delay(10000);
+  char data[] = "test";
+  sendUdp(&data[0]);
+  
 }
+
 
 void do_flash_led(int pin)
 {
