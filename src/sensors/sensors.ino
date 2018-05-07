@@ -15,9 +15,9 @@ ADXL345 adxl = ADXL345(); //I2C communication with accel sensor
 double dist, prevDist = 0;
 int accelX, accelY, accelZ = 0;
 uint16_t itteration = 0; //how long there was no update to server
-bool measurementError1 = 0; //distance sensor returned "-1" 100x
-bool measurementError2 = 0; //accelerometer returned <200 in y axes therefore lid is open
-bool theftError = 0; //distance changed for more than 20 cm from previous measurement
+bool measurementError1 = 0; //distance sensor returned "-1" 100x  (KODA=1)
+bool measurementError2 = 0; //accelerometer returned <200 in y axes therefore lid is open   (KODA=2)
+bool theftError = 0; //distance changed for more than 20 cm from previous measurement   (KODA=3)
 bool interruptFromAccel, interruptFromTimer = 0; //for detemining the source of interrupt TRENUTNO NE RABIMO!!!!!!!
 
 //-----SETUP-----
@@ -31,7 +31,7 @@ void setup () {
 
 //-----LOOP-----
 void loop () {
-  /*
+/*
   int xx,yy,zz;
   adxl.readAccel(&xx, &yy, &zz); // Read the accelerometer values and store them
   Serial.print(xx);
