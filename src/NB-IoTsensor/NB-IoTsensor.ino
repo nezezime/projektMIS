@@ -297,9 +297,9 @@ void loop()
 
   // Wait some time between messages
   delay(5000); // 1000 = 1 sec
-}
-
 */
+
+}
 
 void do_flash_led(int pin)
 {
