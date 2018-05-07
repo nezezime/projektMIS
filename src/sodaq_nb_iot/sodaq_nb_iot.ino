@@ -36,8 +36,6 @@ void setup();
 void loop();
 bool connectToNetwork();
 void sendUdp(const char * data);
-void openUdpSocket();
-void closeUdpSocket();
 bool sendAlarm(int alarmCode);
 bool sendMeasurementData(int volume);
 
@@ -118,16 +116,6 @@ void sendUdp(const char * data)
     //nbiot.sendudp(dataHex, dataSize);
 
     //wait for response?
-}
-
-void openUdpSocket()
-{
-  
-}
-
-void closeUdpSocket()
-{
-  
 }
 
 bool sendAlarm(int alarmCode)
