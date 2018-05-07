@@ -32,7 +32,7 @@ void setup () {
 //-----LOOP-----
 void loop () {
   /*
-  int xx,yy,zz;   
+  int xx,yy,zz;
   adxl.readAccel(&xx, &yy, &zz); // Read the accelerometer values and store them
   Serial.print(xx);
   Serial.print(", ");
@@ -59,7 +59,7 @@ void loop () {
 
   itteration++; //povecaj stevec iteracije za 1
   sleepMinutes(10); //put to sleep for 10 minutes
-  
+
   measurement();
   if (measurementError2) {
     //pokrov odprt
@@ -91,6 +91,7 @@ void loop () {
         if (prevDist - dist > 20.0) {
           theftError = 1;
           //na server poslji dist + theftError=1
+          //dist naj bo pri posiljanju uint16_t
           theftError = 0;
         }
       }
@@ -107,7 +108,7 @@ void measurement() {
   measurementError1 = 0; //distance sensor returned "-1" 100x
   measurementError2 = 0; //accelerometer returned <200 in y axes therefore lid is open
   dist = -1;
-  
+
   updateAccel(); //prebere pospesek
   if (accelY < 200) { //preveri ali je v Y smeri odprt pokrov
     measurementError2 = 1; //je 1, ce je pokrov odprt
@@ -125,7 +126,7 @@ void updateAccel() {
 //MEASURE DISTANCE
 void updateDist() {
   int i, tmp, cnt1 = 0;
-  
+
   while (cnt1 != 20) {
     tmp = distanceSensor.measureDistanceCm();
     if (tmp > 0) { //ce vrne -1 zavrzi meritev

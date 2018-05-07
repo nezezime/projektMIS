@@ -48,10 +48,10 @@ uint32_t lon = 0;
 
 void setup();
 bool connectToNetwork();
-void initHumidityTemperature();
-void initPressureSensor();
+//void initHumidityTemperature();
+//void initPressureSensor();
 int Sodaq_nbIOT;
-void initGPS();
+//void initGPS();
 void loop();
 void do_flash_led(int pin);
 
@@ -75,10 +75,10 @@ void setup()
   delay(2000);
 /////////////POVEZOVANJE//////////////////
   while (!connectToNetwork());
-  
-  initHumidityTemperature();
-  initPressureSensor();
-  initGPS();
+
+  //initHumidityTemperature();
+  //initPressureSensor();
+  //initGPS();
 
   digitalWrite(13, LOW);
 }
@@ -94,9 +94,6 @@ bool connectToNetwork() {
     delay(2000);
     return false;
   }
-
-
-  
 }
 
 ////////////////////PRETVORBA PODATKOV V HEX IN DODAJANJE TOPICA IN ENOTE////////////
@@ -119,6 +116,7 @@ void Data(char *value, String topicdata, String enotahex)
   nbiot.sendudp(testData, testDataLen);
 }
 
+/*
 
 ////////////////////PRETVORBA PODATKOV V HEX IN DODAJANJE TOPICA IN LATITUDE LONGITUDE////////////
 void DataGPS(char *GPSCharLon, char *GPSCharLat, String topicdata)
@@ -141,7 +139,7 @@ void DataGPS(char *GPSCharLon, char *GPSCharLat, String topicdata)
      topicdata+=buf[1];
   }
   sizeUDP=topicdata.length()/2;
-  
+
   //POSLJI UDP na IP naslov v knjižnici
   nbiot.sendudp(topicdata, sizeUDP);
 }
@@ -169,21 +167,21 @@ void initGPS() {
   // sodaq_gps.setDiag(DEBUG_STREAM);
 }
 
-
+*/
 
 void loop()
 {
   do_flash_led(13);
-  int16_t temperature;
-  int16_t humidity;
-  int16_t pressure;
-  char* temperatureChar;
-  char* humidityChar;
-  char* pressureChar;
+  //int16_t temperature;
+  //int16_t humidity;
+  //int16_t pressure;
+  //char* temperatureChar;
+  //char* humidityChar;
+  //char* pressureChar;
   String topic;
   String enotahex;
 
-
+/*
 
 /////////BRANJE TEMPERATURE////////////
   temperature = hts221.readTemperature() * 100;
@@ -191,7 +189,7 @@ void loop()
 //temperatura v temperaturaChar
   char cstr1[16];
   temperatureChar=itoa(temperature, cstr1, 10);
-  
+
   //dodajanje decimalne vejice
   if(temperature>=1000){
   temperatureChar[4]=temperatureChar[3];
@@ -205,7 +203,7 @@ void loop()
   temperatureChar[1]='.';
   temperatureChar[4]='\0';
   }
-  
+
 
 //topic v HEX ----- Temperatura -->54656d706572617475726120
   topic="54656d706572617475726120";
@@ -216,8 +214,9 @@ void loop()
   delay(100);
 
 
+
 ////////////////////BRANJE VLAGE///////////////
-  humidity = hts221.readHumidity()/* * 100*/;
+  humidity = hts221.readHumidity();
   DEBUG_STREAM.println("Humidity : " + (String)humidity);
 
 //humidity v humidityChar
@@ -236,12 +235,12 @@ void loop()
 ////////////////////BRANJE Pritiska///////////////////
   pressure = lps22hb.readPressure();
   DEBUG_STREAM.println("Pressure:" + (String)pressure);
-  
+
 //pressure v pressureChar
   char cstr3[16];
   pressureChar=itoa(pressure, cstr3, 10);
 
-  
+
 //topic v HEX ----- Pritisk -->5072697469736b20
   topic="5072697469736b20";
   enotahex="685061";//hPa
@@ -251,8 +250,8 @@ void loop()
 
 ////////////BRANJE GPS////////////IZBERI 10sec
   uint32_t start = millis();
-  uint32_t timeout = 1UL * 10 * 1000; // x sec timeout 
-  
+  uint32_t timeout = 1UL * 10 * 1000; // x sec timeout
+
 
   DEBUG_STREAM.println(String("waiting for fix ..., timeout=") + timeout + String("ms"));
   if (sodaq_gps.scan(true, timeout)) {
@@ -273,13 +272,13 @@ void loop()
   GPSCharLon[4]=GPSCharLon[3];
   GPSCharLon[3]=GPSCharLon[2];
   GPSCharLon[2]='.';
-  
+
   GPSCharLat[6]=GPSCharLat[5];
   GPSCharLat[5]=GPSCharLat[4];
   GPSCharLat[4]=GPSCharLat[3];
   GPSCharLat[3]=GPSCharLat[2];
   GPSCharLat[2]='.';
-  
+
 
 //topic v HEX ----- GPS  -->47505320
   topic="475053204944313b";
@@ -287,7 +286,7 @@ void loop()
   DataGPS(GPSCharLat, GPSCharLon, topic);
   DEBUG_STREAM.println();
   }
-  
+
   else {
     DEBUG_STREAM.println("GPS No Fix");
 
@@ -295,10 +294,12 @@ void loop()
     String nodata="475053204e6f20466978";
     nbiot.sendudp(nodata, 10);
     }
-  
+
   // Wait some time between messages
   delay(5000); // 1000 = 1 sec
 }
+
+*/
 
 void do_flash_led(int pin)
 {
