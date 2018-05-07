@@ -5,11 +5,11 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
-if(isset($_GET["id"], $_GET["stamp"], $_GET["vol"])) {
+if(isset($_GET["id"], $_GET["flags"], $_GET["volume"])) {
     $idEscaped = $mysqli->real_escape_string($_GET["id"]);
-    $stampEscaped = $mysqli->real_escape_string($_GET["stamp"]);
-    $volEscaped = $mysqli->real_escape_string($_GET["vol"]);
-    if (!$mysqli->query("INSERT into vsipodatki (id_naprave, timestamp, volumen) VALUES ('$idEscaped', '$stampEscaped', '$volEscaped')")) {
+    $flagsEscaped = $mysqli->real_escape_string($_GET["flags"]);
+    $volumeEscaped = $mysqli->real_escape_string($_GET["volume"]);
+    if (!$mysqli->query("INSERT into vsipodatki (id_naprave, error_flag, volumen) VALUES ('$idEscaped', '$flagsEscaped', '$volumeEscaped')")) {
         printf("Error: %s\n", $mysqli->sqlstate);
     }
 }
