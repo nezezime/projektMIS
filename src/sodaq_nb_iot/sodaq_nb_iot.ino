@@ -58,10 +58,10 @@ void setup()
   nbiot.setDiag(DEBUG_STREAM);
 
   delay(2000);
-  //while (!connectToNetwork());
+  while (!connectToNetwork());
 
   //open local socket
-  //nbiot.osocket();
+  nbiot.osocket();
   
   digitalWrite(13, LOW);
 }
@@ -113,7 +113,9 @@ void sendUdp(const char * data)
     DEBUG_STREAM.println(getRequest);
 
     //send multiple datagrams?
-    //nbiot.sendudp(dataHex, dataSize);
+    //String testData = "474554202f75706c6f61642e7068703f69643d3132333426666c6167733d3026766f6c756d653d313020485454502f312e310d0a486f73743a2038332e3231322e3132372e38360d0a4163636570742d456e636f64696e673a20677a69702c6465666c6174650d0a4163636570743a202a2f2a0d0a0d0a";
+    //int testDataSize = 119;
+    nbiot.sendudp(getRequest, dataSize);
 
     //wait for response?
 }
