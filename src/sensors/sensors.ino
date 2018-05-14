@@ -1,11 +1,15 @@
+#include <LowPower.h> //Sleep lib
 #include <HCSR04.h> //Distance sensor lib
 #include <SparkFun_ADXL345.h> //Acceleration sensor lib
+
 
 //-----CONSTANTS-----
 #define TIMER1 1000 //namesto delay(1000);
 #define TrigPin 8 //HCSR04 sensor trig pin
 #define EchoPin 9 //HCSR04 sensor echo pin
 #define accelRange 2 //Set accel sensor range, accepted values are 2g, 4g, 8g or 16g
+
+#define DEBUG_STREAM SerialUSB
 
 //-----INITIALIZATION-----
 UltraSonicDistanceSensor distanceSensor(TrigPin, EchoPin);  //Initialize distance sensor
@@ -22,28 +26,33 @@ bool interruptFromAccel, interruptFromTimer = 0; //for detemining the source of 
 
 //-----SETUP-----
 void setup () {
-  //Serial.begin(9600);
+  DEBUG_STREAM.begin(9600);
+  DEBUG_STREAM.print("START SETUP");
   adxl.powerOn(); //Power on the accel sensor
   adxl.setRangeSetting(accelRange); //Accel range settings
   measurement(); //izvede prvo meritev za ugotavljanje zacetne napolnjenosti smetnjaka
   prevDist = dist; //zacetna napolnjenost smetnjaka
+  DEBUG_STREAM.print("EXIT SETUP");
+
 }
 
 //-----LOOP-----
 void loop () {
-/*
+  //DEBUG_STREAM.print("LOOP ITERATION START");
   int xx,yy,zz;
   adxl.readAccel(&xx, &yy, &zz); // Read the accelerometer values and store them
-  Serial.print(xx);
-  Serial.print(", ");
-  Serial.print(yy);
-  Serial.print(", ");
-  Serial.println(zz);
+  DEBUG_STREAM.print(xx);
+  DEBUG_STREAM.print(", ");
+  DEBUG_STREAM.print(yy);
+  DEBUG_STREAM.print(", ");
+  DEBUG_STREAM.println(zz);
   double distance = distanceSensor.measureDistanceCm();
-  Serial.println(distance); // Print the distance in centimeters
-  Serial.println();
-*/
+  DEBUG_STREAM.println(distance); // Print the distance in centimeters
+  DEBUG_STREAM.println();
+  //DEBUG_STREAM.print("LOOP ITERATION END");
+  delay(1000);
 
+/*
   measurement();
   DEBUG_STREAM.print("Distance [cm] = ");
   DEBUG_STREAM.println(dist);
@@ -55,7 +64,7 @@ void loop () {
   DEBUG_STREAM.println(measurementError2);
   DEBUG_STREAM.println();
   delay(TIMER1);
-
+*/
 /*
   itteration++; //povecaj stevec iteracije za 1
   sleepMinutes(10); //put to sleep for 10 minutes
@@ -146,7 +155,10 @@ void updateDist() {
 }
 
 //SLEEP FOR THE SET NUMBER OF MINUTES
+//NE DELA Z NOVO ARHITEKTURO M0
+/*
 void sleepMinutes(int minutes) {
   for (int i = 0; i < 15 * minutes; i++)
   LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
 }
+*/
