@@ -45,15 +45,15 @@ void loop () {
 */
 
   measurement();
-  Serial.print("Distance [cm] = ");
-  Serial.println(dist);
-  Serial.print("accelY = ");
-  Serial.println(accelY);
-  Serial.print("measurementError1 = ");
-  Serial.println(measurementError1);
-  Serial.print("measurementError2 = ");
-  Serial.println(measurementError2);
-  Serial.println();
+  DEBUG_STREAM.print("Distance [cm] = ");
+  DEBUG_STREAM.println(dist);
+  DEBUG_STREAM.print("accelY = ");
+  DEBUG_STREAM.println(accelY);
+  DEBUG_STREAM.print("measurementError1 = ");
+  DEBUG_STREAM.println(measurementError1);
+  DEBUG_STREAM.print("measurementError2 = ");
+  DEBUG_STREAM.println(measurementError2);
+  DEBUG_STREAM.println();
   delay(TIMER1);
 
 /*
