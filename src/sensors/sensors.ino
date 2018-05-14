@@ -3,8 +3,8 @@
 
 //-----CONSTANTS-----
 #define TIMER1 1000 //namesto delay(1000);
-#define TrigPin 11 //HCSR04 sensor trig pin
-#define EchoPin 12 //HCSR04 sensor echo pin
+#define TrigPin 8 //HCSR04 sensor trig pin
+#define EchoPin 9 //HCSR04 sensor echo pin
 #define accelRange 2 //Set accel sensor range, accepted values are 2g, 4g, 8g or 16g
 
 //-----INITIALIZATION-----
@@ -22,7 +22,7 @@ bool interruptFromAccel, interruptFromTimer = 0; //for detemining the source of 
 
 //-----SETUP-----
 void setup () {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   adxl.powerOn(); //Power on the accel sensor
   adxl.setRangeSetting(accelRange); //Accel range settings
   measurement(); //izvede prvo meritev za ugotavljanje zacetne napolnjenosti smetnjaka
@@ -43,7 +43,7 @@ void loop () {
   Serial.println(distance); // Print the distance in centimeters
   Serial.println();
 */
-/*
+
   measurement();
   Serial.print("Distance [cm] = ");
   Serial.println(dist);
@@ -55,8 +55,8 @@ void loop () {
   Serial.println(measurementError2);
   Serial.println();
   delay(TIMER1);
-*/
 
+/*
   itteration++; //povecaj stevec iteracije za 1
   sleepMinutes(10); //put to sleep for 10 minutes
 
@@ -98,7 +98,7 @@ void loop () {
       prevDist = dist; //shrani trenutno vrednost volumna za naslednje preverjanje
     }
   }
-
+*/
 }
 
 
